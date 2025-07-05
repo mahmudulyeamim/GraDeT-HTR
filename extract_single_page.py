@@ -1,7 +1,7 @@
-from BnDTrOCR.config import DTrOCRConfig
-from BnDTrOCR.model import DTrOCRLMHeadModel
-from BnDTrOCR.processor import DTrOCRProcessor
-from BnDTrOCR.utils import load_final_model
+from GraDT_HTR.config import DTrOCRConfig
+from GraDT_HTR.model import DTrOCRLMHeadModel
+from GraDT_HTR.processor import DTrOCRProcessor
+from GraDT_HTR.utils import load_final_model
 
 from PIL import Image
 import torch
