@@ -86,7 +86,7 @@ if __name__ == "__main__":
     output_dir = os.path.join(root_path, 'output_texts') # final text detection results will be saved here
     
     # flags
-    pdf_flag = True # turn to true when the input is a pdf.
+    pdf_flag = False # turn to true when the input is a pdf.
     clean_input_directory = False # turn to true if you wanna clean the input directory after extracting text
     
     # code starts
@@ -109,7 +109,7 @@ if __name__ == "__main__":
     print("Loading text extraction model...")
     model, processor = load_extraction_model(
         root_path=root_path,
-        weights=os.path.join(root_path, "BnDTrOCR/model_weights/model3_wo_pretrain_bntok_word.pth"),
+        weights=os.path.join(root_path, "GraDT_HTR/model_weights/model3_wo_pretrain_bntok_word.pth"),
         device=device
     )
     print("Text extraction model loaded successfully")
