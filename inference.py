@@ -5,6 +5,34 @@ import time
 import torch
 import os
 import shutil
+import argparse
+import sys
+
+# Initialize argument parser
+parser = argparse.ArgumentParser(description="GraDeT-HTR Inference Script")
+
+# Add model weights argument with default path
+parser.add_argument(
+    "--weights",
+    type=str,
+    required=True,
+    help="Path to the trained model weights (.pth file) for text recognition model.",
+)
+
+parser.add_argument(
+    "--pdf",
+    action="store_true",
+    default=False, 
+    help="Enable this flag if the input is a PDF file (default: False)."
+)
+
+# Parse arguments
+args = parser.parse_args()
+
+text_extraction_model_path = args.weights
+print(f"Using text recognition model weights from: {text_extraction_model_path}")
+
+pdf_flag = args.pdf
 
 
 def clean_workspace(directory):
@@ -84,16 +112,48 @@ if __name__ == "__main__":
     input_dir  = os.path.join(root_path, 'input_pages') # the inputs are expected to be in this directory
     segmented_page_dir = os.path.join(root_path, "output_segmentations") # segmented words will be saved here
     output_dir = os.path.join(root_path, 'output_texts') # final text detection results will be saved here
+
+    bndrishti_content_dir = os.path.join(root_path, "BN_DRISHTI", "content")
+
+    if not os.path.exists(bndrishti_content_dir):
+        os.makedirs(bndrishti_content_dir)
+
+    if not os.path.exists(input_dir):
+        print("'input_pages' directory not found.")
+        print("Please create the directory 'input_pages' and drop your input pages or PDF files there.")
+        sys.exit(1)
+        
+    if os.path.exists(segmented_page_dir):
+        clean_workspace(segmented_page_dir)
+        print(f"Cleaned previous word segmentations from {segmented_page_dir}")
+    else:
+        os.makedirs(segmented_page_dir)
+        print(f"Created directory: {segmented_page_dir}")
+
+    # Ensure text output directory exists
+    if os.path.exists(output_dir):
+        clean_workspace(output_dir)
+        print(f"Cleaned previous text outputs from {output_dir}")
+    else:
+        os.makedirs(output_dir)
+        print(f"Created directory: {output_dir}")
+    
     
     # flags
-    pdf_flag = False # turn to true when the input is a pdf.
+    # pdf_flag = False # turn to true when the input is a pdf.
     clean_input_directory = False # turn to true if you wanna clean the input directory after extracting text
     
     # code starts
-    clean_workspace(segmented_page_dir)
-    clean_workspace(output_dir)
+    # clean_workspace(segmented_page_dir)
+    # clean_workspace(output_dir)
+    
+    if pdf_flag:
+        print("Processing PDF input...")
+    else:
+        print("Processing image input...")
 
-    torch.cuda.reset_peak_memory_stats()
+
+    # torch.cuda.reset_peak_memory_stats()
 
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
@@ -109,7 +169,7 @@ if __name__ == "__main__":
     print("Loading text extraction model...")
     model, processor = load_extraction_model(
         root_path=root_path,
-        weights=os.path.join(root_path, "GraDT_HTR/model_weights/model3_wo_pretrain_bntok_word.pth"),
+        weights=os.path.join(root_path, text_extraction_model_path),
         device=device
     )
     print("Text extraction model loaded successfully")
@@ -151,5 +211,5 @@ if __name__ == "__main__":
     print("Time to segment: ", t1 - t0)
     print("Time to extract: ", t2 - t1)
 
-    peak_bytes = torch.cuda.max_memory_allocated()
-    print(f"Peak GPU memory usage: {peak_bytes/1024**3:.2f} GB")
+    # peak_bytes = torch.cuda.max_memory_allocated()
+    # print(f"Peak GPU memory usage: {peak_bytes/1024**3:.2f} GB")
