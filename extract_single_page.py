@@ -1,7 +1,7 @@
-from GraDT_HTR.config import DTrOCRConfig
-from GraDT_HTR.model import DTrOCRLMHeadModel
-from GraDT_HTR.processor import DTrOCRProcessor
-from GraDT_HTR.utils import load_final_model
+from GraDeT_HTR.config import DTrOCRConfig
+from GraDeT_HTR.model import DTrOCRLMHeadModel
+from GraDeT_HTR.processor import DTrOCRProcessor
+from GraDeT_HTR.utils import load_final_model
 
 from PIL import Image
 import torch
